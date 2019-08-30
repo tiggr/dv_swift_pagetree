@@ -18,11 +18,11 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['proc
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass'][] = \Davitec\DvSwiftPagetree\Hook\PagetreeCacheUpdateHooks::class;
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['moveRecordClass'][] = \Davitec\DvSwiftPagetree\Hook\PagetreeCacheUpdateHooks::class;
 
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Backend\\Tree\\Repository\\PageTreeRepository'] = [
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Tree\Repository\PageTreeRepository::class] = [
   'className' => \Davitec\DvSwiftPagetree\Xclass\Backend\Tree\Repository\PageTreeRepository::class,
 ];
 
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['TYPO3\\CMS\\Backend\\Controller\\Page\\TreeController'] = [
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Controller\Page\TreeController::class] = [
   'className' => \Davitec\DvSwiftPagetree\Xclass\Backend\Controller\Page\TreeController::class,
 ];
 
