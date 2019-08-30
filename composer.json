@@ -1,0 +1,23 @@
+{
+  "name": "davitec/dv-swift-pagetree",
+  "type": "typo3-cms-extension",
+  "description": "Faster TYPO3 Pagetree",
+  "authors": [
+    {
+      "name": "Daniel Schöne",
+      "email": "ds@davitec.de"
+    }
+  ],
+  "license": "GPL-2.0+",
+  "require": {
+    "typo3/cms-core": "^9.5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Davitec\\DvSwiftPagetree\\": "Classes"
+    }
+  },
+  "replace": {
+    "dv_swift_pagetree": "self.version"
+  }
+}
