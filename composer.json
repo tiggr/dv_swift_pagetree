@@ -18,6 +18,6 @@
     }
   },
   "replace": {
-    "dv_swift_pagetree": "self.version"
+    "tyop3-ter/dv-swift-pagetree": "self.version"
   }
 }
