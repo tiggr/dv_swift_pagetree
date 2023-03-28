@@ -18,6 +18,11 @@
     }
   },
   "replace": {
-    "tyop3-ter/dv-swift-pagetree": "self.version"
+    "tyop3-ter/dv-swift-pagetree": "self.version",
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "dv_swift_pagetree"
+    }
   }
 }
