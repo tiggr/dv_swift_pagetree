@@ -8,6 +8,10 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Controller\Page
 ];
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\ContextMenu\ItemProviders\PageProvider::class] = [
-  'className' => \Davitec\DvSwiftPagetree\Xclass\Backend\ContextMenu\ItemProviders\PageProvider::class,
+    'className' => \Davitec\DvSwiftPagetree\Xclass\Backend\ContextMenu\ItemProviders\PageProvider::class,
+];
+
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Core\Routing\PageSlugCandidateProvider::class] = [
+    'className' => \Davitec\DvSwiftPagetree\Xclass\Routing\PageSlugCandidateProvider::class,
 ];
 
