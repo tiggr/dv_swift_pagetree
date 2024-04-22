@@ -1,0 +1,1 @@
+This extension improves performance of TYPO3 installations having _many_ sites (e.g. > 1k) by using a stored procedure on DB server (only MySQL / MariaDB). For operation a stored procedure named GetRootPageUid must be installed manually on the server (see ext_tables_GetRootPageUid_mysql5/8.sql in this directory)!
