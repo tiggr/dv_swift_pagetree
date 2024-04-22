@@ -18,8 +18,7 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
      * Check for records in the database which matches one of the slug candidates.
      *
      * @IMPORTANT This method uses a custom stored procedure GetPageRootPageUid @ mysql server
-     * @see ext_tables_GetPageRootPageUid_mysql5.sql and ext_tables_GetPageRootPageUid_mysql8.sql
-     *      in root of extension
+     * @see ext_tables_GetPageRootPageUid_mysql.sql in root of extension
      *
      * @param array $slugCandidates
      * @param int $languageId
