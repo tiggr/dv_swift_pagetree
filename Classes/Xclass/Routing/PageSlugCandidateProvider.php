@@ -1,6 +1,6 @@
 <?php
 
-namespace Davitec\DvSwiftPagetree\XClass\Routing;
+namespace Davitec\DvSwiftPagetree\Xclass\Routing;
 
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
