@@ -17,39 +17,9 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
     /**
      * Check for records in the database which matches one of the slug candidates.
      *
-     * uses stored procedure @ mysql server:
-     *
-     *
-
-    DELIMITER $$
-
-    DROP FUNCTION IF EXISTS `GetRootPageUid` $$
-    CREATE FUNCTION `GetRootPageUid` (GivenID INT) RETURNS INT
-    DETERMINISTIC
-    BEGIN
-    DECLARE parentUid, targetUid, isSiteRoot INT;
-    SET targetUid = GivenID;
-
-    WHILE TRUE DO
-    IF targetUid = 0 THEN
-    RETURN 0;
-    END IF;
-
-    SELECT  pid, is_siteroot INTO parentUid, isSiteRoot
-    FROM pages WHERE uid =	targetUid;
-
-    IF isSiteRoot THEN
-    RETURN targetUid;
-    ELSE
-    SET targetUid = parentUid;
-    END IF;
-    END WHILE;
-    END $$
-
-     *
-     *
-     *
-     *
+     * @IMPORTANT This method uses a custom stored procedure GetPageRootPageUid @ mysql server
+     * @see ext_tables_GetPageRootPageUid_mysql5.sql and ext_tables_GetPageRootPageUid_mysql8.sql
+     *      in root of extension
      *
      * @param array $slugCandidates
      * @param int $languageId
@@ -89,6 +59,15 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
                     )
                 )
             )
+            // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // NOTE: added restriction to only query subpages of current site using result of stored procedure
+            ->having(
+                $queryBuilder->expr()->eq(
+                    'root_page_uid',
+                    $queryBuilder->createNamedParameter($this->site->getRootPageId(), Connection::PARAM_INT)
+                )
+            )
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // Exact match will be first, that's important
             ->orderBy('slug', 'desc')
             // versioned records should be rendered before the live records
@@ -104,13 +83,6 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
         $isRecursiveCall = !empty($excludeUids);
 
         while ($row = $statement->fetchAssociative()) {
-            // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            // NOTE: added condition to only query subpages of current site
-            //       uses custom stored procedure
-            if ($row['root_page_uid'] !== $this->site->getRootPageId()) {
-                continue;
-            }
-            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             $mountPageInformation = null;
             $pageIdInDefaultLanguage = (int)($languageId > 0 ? $row['l10n_parent'] : ($row['t3ver_oid'] ?: $row['uid']));
             // When this page was added before via recursion, this page should be skipped
