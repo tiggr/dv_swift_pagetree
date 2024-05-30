@@ -98,7 +98,7 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
         $pageRepository = GeneralUtility::makeInstance(PageRepository::class, $this->context);
         $isRecursiveCall = !empty($excludeUids);
 
-        while ($row = $statement->fetchAssociative()) {
+        while ($row = $result->fetchAssociative()) {
             $mountPageInformation = null;
             $pageIdInDefaultLanguage = (int)($languageId > 0 ? $row['l10n_parent'] : ($row['t3ver_oid'] ?: $row['uid']));
             // When this page was added before via recursion, this page should be skipped
