@@ -10,6 +10,7 @@ use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Database\QueryGenerator;
 
 class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidateProvider
 {
@@ -28,6 +29,10 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
      */
     protected function getPagesFromDatabaseForCandidates(array $slugCandidates, int $languageId, array $excludeUids = []): array
     {
+        $rootPageUid = $this->site->getRootPageId();
+        $queryGenerator = GeneralUtility::makeInstance(QueryGenerator::class);
+        $pageUidsString = $queryGenerator->getTreeList($rootPageUid, 99999, 0, 'deleted=0');
+        $pageUids = explode(',', $pageUidsString);
         $workspaceId = (int)$this->context->getPropertyFromAspect('workspace', 'id');
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('pages');
@@ -42,7 +47,7 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
             // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             // NOTE: added select to only query subpages of current site
             //       uses custom stored procedure
-            ->addSelectLiteral('GetRootPageUid(uid) AS root_page_uid')
+//            ->addSelectLiteral('GetRootPageUid(uid) AS root_page_uid')
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             ->from('pages')
             ->where(
@@ -56,16 +61,23 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
                         $slugCandidates,
                         Connection::PARAM_STR_ARRAY
                     )
+                ),
+                $queryBuilder->expr()->in(
+                    'uid',
+                    $queryBuilder->createNamedParameter(
+                        $pageUids,
+                            Connection::PARAM_INT_ARRAY
+                    )
                 )
             )
             // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
             // NOTE: added restriction to only query subpages of current site using result of stored procedure
-            ->having(
-                $queryBuilder->expr()->eq(
-                    'root_page_uid',
-                    $queryBuilder->createNamedParameter($this->site->getRootPageId(), Connection::PARAM_INT)
-                )
-            )
+//            ->having(
+//                $queryBuilder->expr()->eq(
+//                    'root_page_uid',
+//                    $queryBuilder->createNamedParameter($rootPageId, Connection::PARAM_INT)
+//                )
+//            )
             // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             // Exact match will be first, that's important
             ->orderBy('slug', 'desc')
@@ -74,7 +86,12 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
             // Sort pages that are not MountPoint pages before mount points
             ->addOrderBy('mount_pid_ol', 'asc')
             ->addOrderBy('mount_pid', 'asc')
-            ->executeQuery();
+//            ->executeQuery();
+        ;
+
+//        $query = $queryBuilder->getSQL();
+//        $parameters = $queryBuilder->getParameters();
+        $result = $statement->execute();
 
         $pages = [];
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
