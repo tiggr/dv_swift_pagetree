@@ -32,7 +32,7 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
         $rootPageUid = $this->site->getRootPageId();
         $queryGenerator = GeneralUtility::makeInstance(QueryGenerator::class);
         $pageUidsString = $queryGenerator->getTreeList($rootPageUid, 99999, 0, 'deleted=0');
-        $pageUids = explode(',', $pageUidsString);
+        $pageUids = explode(',', (string) $pageUidsString);
         $workspaceId = (int)$this->context->getPropertyFromAspect('workspace', 'id');
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('pages');
@@ -108,7 +108,7 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
 
             try {
                 $isOnSameSite = $siteFinder->getSiteByPageId($pageIdInDefaultLanguage)->getRootPageId() === $this->site->getRootPageId();
-            } catch (SiteNotFoundException $e) {
+            } catch (SiteNotFoundException) {
                 // Page is not in a site, so it's not considered
                 $isOnSameSite = false;
             }
