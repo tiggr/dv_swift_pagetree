@@ -1208,7 +1208,9 @@ class QueryGenerator
     /**
      * Init user definition
      */
-    public function initUserDef() {}
+    public function initUserDef()
+    {
+    }
 
     /**
      * User definition
@@ -1397,7 +1399,9 @@ class QueryGenerator
      * @param array $qcArr
      * @param bool $first
      */
-    public function getUserDefQuery($qcArr, $first) {}
+    public function getUserDefQuery($qcArr, $first)
+    {
+    }
 
     /**
      * Update icon

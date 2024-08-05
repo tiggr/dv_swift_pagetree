@@ -14,7 +14,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidateProvider
 {
-
     /**
      * Check for records in the database which matches one of the slug candidates.
      *
@@ -66,7 +65,7 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
                     'uid',
                     $queryBuilder->createNamedParameter(
                         $pageUids,
-                            Connection::PARAM_INT_ARRAY
+                        Connection::PARAM_INT_ARRAY
                     )
                 )
             )
@@ -89,8 +88,8 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
 //            ->executeQuery();
         ;
 
-//        $query = $queryBuilder->getSQL();
-//        $parameters = $queryBuilder->getParameters();
+        //        $query = $queryBuilder->getSQL();
+        //        $parameters = $queryBuilder->getParameters();
         $result = $statement->execute();
 
         $pages = [];
