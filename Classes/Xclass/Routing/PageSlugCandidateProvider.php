@@ -2,6 +2,7 @@
 
 namespace Davitec\DvSwiftPagetree\Xclass\Routing;
 
+use Davitec\DvSwiftPagetree\Database\QueryGenerator;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -10,7 +11,6 @@ use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Database\QueryGenerator;
 
 class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidateProvider
 {
