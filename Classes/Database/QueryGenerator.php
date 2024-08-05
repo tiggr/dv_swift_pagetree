@@ -1193,8 +1193,7 @@ class QueryGenerator
     {
         $retArr = [];
         while (\is_array($arr)) {
-            reset($arr);
-            $key = key($arr);
+            $key = array_key_first($arr);
             $retArr[] = $key;
             if (isset($arr[$key])) {
                 $arr = $arr[$key];
