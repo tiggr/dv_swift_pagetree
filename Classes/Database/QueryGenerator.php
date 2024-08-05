@@ -246,7 +246,7 @@ class QueryGenerator
 
     public function __construct()
     {
-//        trigger_error(__CLASS__ . ' will be removed in TYPO3 v12.', E_USER_DEPRECATED);
+        //        trigger_error(__CLASS__ . ' will be removed in TYPO3 v12.', E_USER_DEPRECATED);
     }
 
     /**
@@ -1252,19 +1252,11 @@ class QueryGenerator
         $first = true;
         foreach ($queryConfig as $key => $conf) {
             $conf = $this->convertIso8601DatetimeStringToUnixTimestamp($conf);
-            switch ($conf['type']) {
-                case 'newlevel':
-                    $qs .= LF . $pad . trim($conf['operator']) . ' (' . $this->getQuery(
-                            $queryConfig[$key]['nl'],
-                            $pad . '   '
-                        ) . LF . $pad . ')';
-                    break;
-                case 'userdef':
-                    $qs .= LF . $pad . $this->getUserDefQuery($conf, $first);
-                    break;
-                default:
-                    $qs .= LF . $pad . $this->getQuerySingle($conf, $first);
-            }
+            match ($conf['type']) {
+                'newlevel' => $qs .= LF . $pad . trim((string)$conf['operator']) . ' (' . $this->getQuery($queryConfig[$key]['nl'], $pad . '   ') . LF . $pad . ')',
+                'userdef' => $qs .= LF . $pad . $this->getUserDefQuery($conf, $first),
+                default => $qs .= LF . $pad . $this->getQuerySingle($conf, $first),
+            };
             $first = false;
         }
         return $qs;
@@ -1438,7 +1430,7 @@ class QueryGenerator
         if (in_array('table', $enableArr) && !($userTsConfig['mod.']['dbint.']['disableSelectATable'] ?? false)) {
             $out[] = '<div class="form-group">';
             $out[] = '	<label for="SET[queryTable]">Select a table:</label>';
-            $out[] =    $this->mkTableSelect('SET[queryTable]', $this->table);
+            $out[] = $this->mkTableSelect('SET[queryTable]', $this->table);
             $out[] = '</div>';
         }
         if ($this->table) {
@@ -1478,19 +1470,19 @@ class QueryGenerator
             if (in_array('fields', $enableArr) && !($userTsConfig['mod.']['dbint.']['disableSelectFields'] ?? false)) {
                 $out[] = '<div class="form-group form-group-with-button-addon">';
                 $out[] = '	<label for="SET[queryFields]">Select fields:</label>';
-                $out[] =    $this->mkFieldToInputSelect('SET[queryFields]', $this->extFieldLists['queryFields']);
+                $out[] = $this->mkFieldToInputSelect('SET[queryFields]', $this->extFieldLists['queryFields']);
                 $out[] = '</div>';
             }
             if (in_array('query', $enableArr) && !($userTsConfig['mod.']['dbint.']['disableMakeQuery'] ?? false)) {
                 $out[] = '<div class="form-group">';
                 $out[] = '	<label>Make Query:</label>';
-                $out[] =    $queryCode;
+                $out[] = $queryCode;
                 $out[] = '</div>';
             }
             if (in_array('group', $enableArr) && !($userTsConfig['mod.']['dbint.']['disableGroupBy'] ?? false)) {
                 $out[] = '<div class="form-group form-inline">';
                 $out[] = '	<label for="SET[queryGroup]">Group By:</label>';
-                $out[] =     $this->mkTypeSelect('SET[queryGroup]', $this->extFieldLists['queryGroup'], '');
+                $out[] = $this->mkTypeSelect('SET[queryGroup]', $this->extFieldLists['queryGroup'], '');
                 $out[] = '</div>';
             }
             if (in_array('order', $enableArr) && !($userTsConfig['mod.']['dbint.']['disableOrderBy'] ?? false)) {
@@ -1500,7 +1492,7 @@ class QueryGenerator
                 $orderBy[] = '<div class="form-check">';
                 $orderBy[] = BackendUtility::getFuncCheck(0, 'SET[queryOrderDesc]', $modSettings['queryOrderDesc'], '', '', 'id="checkQueryOrderDesc"');
                 $orderBy[] = '	<label class="form-check-label" for="checkQueryOrderDesc">';
-                $orderBy[] =        'Descending';
+                $orderBy[] = 'Descending';
                 $orderBy[] = '	</label>';
                 $orderBy[] = '</div>';
 
@@ -1509,13 +1501,13 @@ class QueryGenerator
                     $orderBy[] = '<div class="form-check">';
                     $orderBy[] = BackendUtility::getFuncCheck(0, 'SET[queryOrder2Desc]', $modSettings['queryOrder2Desc'] ?? false, '', '', 'id="checkQueryOrder2Desc"');
                     $orderBy[] = '	<label class="form-check-label" for="checkQueryOrder2Desc">';
-                    $orderBy[] =        'Descending';
+                    $orderBy[] = 'Descending';
                     $orderBy[] = '	</label>';
                     $orderBy[] = '</div>';
                 }
                 $out[] = '<div class="form-group form-inline">';
                 $out[] = '	<label>Order By:</label>';
-                $out[] =     implode(LF, $orderBy);
+                $out[] = implode(LF, $orderBy);
                 $out[] = '</div>';
             }
             if (in_array('limit', $enableArr) && !($userTsConfig['mod.']['dbint.']['disableLimit'] ?? false)) {
@@ -1549,10 +1541,10 @@ class QueryGenerator
                 $out[] = '<div class="form-group">';
                 $out[] = '	<label>Limit:</label>';
                 $out[] = '	<div class="form-inline">';
-                $out[] =        implode(LF, $limit);
+                $out[] = implode(LF, $limit);
                 $out[] = '		<div class="btn-group t3js-limit-submit">';
-                $out[] =            $prevButton;
-                $out[] =            $nextButton;
+                $out[] = $prevButton;
+                $out[] = $nextButton;
                 $out[] = '		</div>';
                 $out[] = '		<div class="btn-group t3js-limit-submit">';
                 $out[] = '			<input type="button" class="btn btn-default" data-value="10" value="10">';
