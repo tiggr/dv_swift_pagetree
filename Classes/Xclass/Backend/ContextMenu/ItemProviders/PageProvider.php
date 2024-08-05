@@ -6,9 +6,9 @@ namespace Davitec\DvSwiftPagetree\Xclass\Backend\ContextMenu\ItemProviders;
 class PageProvider extends \TYPO3\CMS\Backend\ContextMenu\ItemProviders\PageProvider
 {
 
-  public function __construct(string $table, string $identifier, string $context = '')
+  public function __construct()
   {
-    parent::__construct($table, $identifier, $context);
+    parent::__construct();
 
     $this->itemsConfiguration = [
       'mountAsTreeRoot' => [
