@@ -1292,10 +1292,9 @@ class QueryGenerator
     /**
      * Checks if the given value is of the ISO 8601 format.
      *
-     * @param mixed $date
      * @return bool
      */
-    protected function isDateOfIso8601Format($date): bool
+    protected function isDateOfIso8601Format(mixed $date): bool
     {
         if (!is_int($date) && !is_string($date)) {
             return false;
