@@ -443,7 +443,7 @@ class QueryGenerator
     public function procesData($qC = [])
     {
         $this->queryConfig = $qC;
-        $POST = GeneralUtility::_POST();
+        $POST = $GLOBALS['TYPO3_REQUEST']->getParsedBody();
         // If delete...
         if ($POST['qG_del'] ?? false) {
             // Initialize array to work on, save special parameters
