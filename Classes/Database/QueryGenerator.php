@@ -566,7 +566,7 @@ class QueryGenerator
         foreach ($queryConfig as $key => $conf) {
             $fieldName = '';
             if (str_starts_with(($conf['type'] ?? ''), 'FIELD_')) {
-                $fieldName = substr($conf['type'], 6);
+                $fieldName = substr((string) $conf['type'], 6);
                 $fieldType = $this->fields[$fieldName]['type'] ?? '';
             } elseif (($conf['type'] ?? '') === 'newlevel') {
                 $fieldType = $conf['type'];
@@ -620,7 +620,7 @@ class QueryGenerator
             $lineHTML = [];
             $lineHTML[] = $this->mkOperatorSelect($this->name . $subscript, ($conf['operator'] ?? ''), (bool)$c, ($conf['type'] ?? '') !== 'FIELD_');
             if (str_starts_with(($conf['type'] ?? ''), 'FIELD_')) {
-                $fieldName = substr($conf['type'], 6);
+                $fieldName = substr((string) $conf['type'], 6);
                 $this->fieldName = $fieldName;
                 $fieldType = $this->fields[$fieldName]['type'] ?? '';
                 if ((int)($conf['comparison'] ?? 0) >> 5 !== (int)($this->comp_offsets[$fieldType] ?? 0)) {
@@ -783,7 +783,7 @@ class QueryGenerator
         if ($fieldSetup['type'] === 'multiple') {
             $optGroupOpen = false;
             foreach (($fieldSetup['items'] ?? []) as $val) {
-                if (strpos($val[0], 'LLL:') === 0) {
+                if (str_starts_with((string) $val[0], 'LLL:')) {
                     $value = $languageService->sL($val[0]);
                 } else {
                     $value = $val[0];
@@ -794,11 +794,11 @@ class QueryGenerator
                         $out[] = '</optgroup>';
                     }
                     $optGroupOpen = true;
-                    $out[] = '<optgroup label="' . htmlspecialchars($value) . '">';
+                    $out[] = '<optgroup label="' . htmlspecialchars((string) $value) . '">';
                 } elseif (GeneralUtility::inList($conf['inputValue'], $itemVal)) {
-                    $out[] = '<option value="' . htmlspecialchars($itemVal) . '" selected>' . htmlspecialchars($value) . '</option>';
+                    $out[] = '<option value="' . htmlspecialchars($itemVal) . '" selected>' . htmlspecialchars((string) $value) . '</option>';
                 } else {
-                    $out[] = '<option value="' . htmlspecialchars($itemVal) . '">' . htmlspecialchars($value) . '</option>';
+                    $out[] = '<option value="' . htmlspecialchars($itemVal) . '">' . htmlspecialchars((string) $value) . '</option>';
                 }
             }
             if ($optGroupOpen) {
@@ -807,16 +807,16 @@ class QueryGenerator
         }
         if ($fieldSetup['type'] === 'binary') {
             foreach (($fieldSetup['items'] ?? []) as $key => $val) {
-                if (strpos($val[0], 'LLL:') === 0) {
+                if (str_starts_with((string) $val[0], 'LLL:')) {
                     $value = $languageService->sL($val[0]);
                 } else {
                     $value = $val[0];
                 }
                 $itemVal = (string)(2 ** $key);
                 if (GeneralUtility::inList($conf['inputValue'], $itemVal)) {
-                    $out[] = '<option value="' . $itemVal . '" selected>' . htmlspecialchars($value) . '</option>';
+                    $out[] = '<option value="' . $itemVal . '" selected>' . htmlspecialchars((string) $value) . '</option>';
                 } else {
-                    $out[] = '<option value="' . $itemVal . '">' . htmlspecialchars($value) . '</option>';
+                    $out[] = '<option value="' . $itemVal . '">' . htmlspecialchars((string) $value) . '</option>';
                 }
             }
         }
@@ -824,21 +824,21 @@ class QueryGenerator
             $useTablePrefix = 0;
             $dontPrefixFirstTable = 0;
             foreach (($fieldSetup['items'] ?? []) as $val) {
-                if (strpos($val[0], 'LLL:') === 0) {
+                if (str_starts_with((string) $val[0], 'LLL:')) {
                     $value = $languageService->sL($val[0]);
                 } else {
                     $value = $val[0];
                 }
                 $outputValue = (string)($val[1] ?? '');
                 if (GeneralUtility::inList($conf['inputValue'], $outputValue)) {
-                    $out[] = '<option value="' . htmlspecialchars($outputValue) . '" selected>' . htmlspecialchars($value) . '</option>';
+                    $out[] = '<option value="' . htmlspecialchars($outputValue) . '" selected>' . htmlspecialchars((string) $value) . '</option>';
                 } else {
-                    $out[] = '<option value="' . htmlspecialchars($outputValue) . '">' . htmlspecialchars($value) . '</option>';
+                    $out[] = '<option value="' . htmlspecialchars($outputValue) . '">' . htmlspecialchars((string) $value) . '</option>';
                 }
             }
             $allowedFields = $fieldSetup['allowed'] ?? '';
-            if (str_contains($allowedFields, ',')) {
-                $from_table_Arr = explode(',', $allowedFields);
+            if (str_contains((string) $allowedFields, ',')) {
+                $from_table_Arr = explode(',', (string) $allowedFields);
                 $useTablePrefix = 1;
                 if (!$fieldSetup['prepend_tname']) {
                     $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
@@ -847,8 +847,8 @@ class QueryGenerator
                         ->from($table)
                         ->execute();
                     while ($row = $statement->fetchAssociative()) {
-                        if (str_contains($row[$fieldName], ',')) {
-                            $checkContent = explode(',', $row[$fieldName]);
+                        if (str_contains((string) $row[$fieldName], ',')) {
+                            $checkContent = explode(',', (string) $row[$fieldName]);
                             foreach ($checkContent as $singleValue) {
                                 if (!str_contains($singleValue, '_')) {
                                     $dontPrefixFirstTable = 1;
@@ -856,7 +856,7 @@ class QueryGenerator
                             }
                         } else {
                             $singleValue = $row[$fieldName];
-                            if ($singleValue !== '' && !str_contains($singleValue, '_')) {
+                            if ($singleValue !== '' && !str_contains((string) $singleValue, '_')) {
                                 $dontPrefixFirstTable = 1;
                             }
                         }
@@ -888,7 +888,7 @@ class QueryGenerator
                     $altLabelField = $GLOBALS['TCA'][$from_table]['ctrl']['label_alt'] ?? '';
                     if ($GLOBALS['TCA'][$from_table]['columns'][$labelField]['config']['items'] ?? false) {
                         foreach ($GLOBALS['TCA'][$from_table]['columns'][$labelField]['config']['items'] as $labelArray) {
-                            if (strpos($labelArray[0], 'LLL:') === 0) {
+                            if (str_starts_with((string) $labelArray[0], 'LLL:')) {
                                 $labelFieldSelect[$labelArray[1]] = $languageService->sL($labelArray[0]);
                             } else {
                                 $labelFieldSelect[$labelArray[1]] = $labelArray[0];
@@ -899,7 +899,7 @@ class QueryGenerator
                     $altLabelFieldSelect = [];
                     if ($GLOBALS['TCA'][$from_table]['columns'][$altLabelField]['config']['items'] ?? false) {
                         foreach ($GLOBALS['TCA'][$from_table]['columns'][$altLabelField]['config']['items'] as $altLabelArray) {
-                            if (strpos($altLabelArray[0], 'LLL:') === 0) {
+                            if (str_starts_with((string) $altLabelArray[0], 'LLL:')) {
                                 $altLabelFieldSelect[$altLabelArray[1]] = $languageService->sL($altLabelArray[0]);
                             } else {
                                 $altLabelFieldSelect[$altLabelArray[1]] = $altLabelArray[0];
@@ -965,13 +965,13 @@ class QueryGenerator
 
                     foreach (($this->tableArray[$from_table] ?? []) as $val) {
                         if ($useSelectLabels) {
-                            $outArray[$tablePrefix . $val['uid']] = htmlspecialchars($labelFieldSelect[$val[$labelField]]);
+                            $outArray[$tablePrefix . $val['uid']] = htmlspecialchars((string) $labelFieldSelect[$val[$labelField]]);
                         } elseif ($val[$labelField]) {
-                            $outArray[$tablePrefix . $val['uid']] = htmlspecialchars($val[$labelField]);
+                            $outArray[$tablePrefix . $val['uid']] = htmlspecialchars((string) $val[$labelField]);
                         } elseif ($useAltSelectLabels) {
-                            $outArray[$tablePrefix . $val['uid']] = htmlspecialchars($altLabelFieldSelect[$val[$altLabelField]]);
+                            $outArray[$tablePrefix . $val['uid']] = htmlspecialchars((string) $altLabelFieldSelect[$val[$altLabelField]]);
                         } else {
-                            $outArray[$tablePrefix . $val['uid']] = htmlspecialchars($val[$altLabelField]);
+                            $outArray[$tablePrefix . $val['uid']] = htmlspecialchars((string) $val[$altLabelField]);
                         }
                     }
                     if (isset($this->settings['options_sortlabel']) && $this->settings['options_sortlabel'] && is_array($outArray)) {
@@ -1008,7 +1008,7 @@ class QueryGenerator
 
             if ($this->enableQueryParts) {
                 $out[] = '<pre>';
-                $out[] = htmlspecialchars($v['query']);
+                $out[] = htmlspecialchars((string) $v['query']);
                 $out[] = '</pre>';
             }
             if (is_array($v['sub'] ?? false)) {
@@ -1037,8 +1037,8 @@ class QueryGenerator
         if ($draw) {
             $out[] = '<div class="form-inline">';
             $out[] = '<select class="form-select' . ($submit ? ' t3js-submit-change' : '') . '" name="' . htmlspecialchars($name) . '[operator]">';
-            $out[] = '	<option value="AND"' . (!$op || $op === 'AND' ? ' selected' : '') . '>' . htmlspecialchars($this->lang['AND']) . '</option>';
-            $out[] = '	<option value="OR"' . ($op === 'OR' ? ' selected' : '') . '>' . htmlspecialchars($this->lang['OR']) . '</option>';
+            $out[] = '	<option value="AND"' . (!$op || $op === 'AND' ? ' selected' : '') . '>' . htmlspecialchars((string) $this->lang['AND']) . '</option>';
+            $out[] = '	<option value="OR"' . ($op === 'OR' ? ' selected' : '') . '>' . htmlspecialchars((string) $this->lang['OR']) . '</option>';
             $out[] = '</select>';
             $out[] = '</div>';
         } else {
@@ -1063,7 +1063,7 @@ class QueryGenerator
         foreach ($this->fields as $key => $value) {
             if (!($value['exclude'] ?? false) || $this->getBackendUserAuthentication()->check('non_exclude_fields', $this->table . ':' . $key)) {
                 $label = $this->fields[$key]['label'] ?? '[' . $key . ']';
-                $out[] = '<option value="' . htmlspecialchars($prepend . $key) . '"' . ($key === $fieldName ? ' selected' : '') . '>' . htmlspecialchars($label) . '</option>';
+                $out[] = '<option value="' . htmlspecialchars($prepend . $key) . '"' . ($key === $fieldName ? ' selected' : '') . '>' . htmlspecialchars((string) $label) . '</option>';
             }
         }
         $out[] = '</select>';
@@ -1133,7 +1133,7 @@ class QueryGenerator
         foreach ($this->fields as $key => $value) {
             if (!$value['exclude'] || $this->getBackendUserAuthentication()->check('non_exclude_fields', $this->table . ':' . $key)) {
                 $label = $this->fields[$key]['label'];
-                $out[] = '<option value="' . htmlspecialchars($key) . '"' . ($key === $fieldName ? ' selected' : '') . '>' . htmlspecialchars($label) . '</option>';
+                $out[] = '<option value="' . htmlspecialchars($key) . '"' . ($key === $fieldName ? ' selected' : '') . '>' . htmlspecialchars((string) $label) . '</option>';
             }
         }
         $out[] = '</select>';
@@ -1154,7 +1154,7 @@ class QueryGenerator
         $out[] = '<option value=""></option>';
         foreach ($GLOBALS['TCA'] as $tN => $value) {
             if ($this->getBackendUserAuthentication()->check('tables_select', $tN)) {
-                $out[] = '<option value="' . htmlspecialchars($tN) . '"' . ($tN === $cur ? ' selected' : '') . '>' . htmlspecialchars($this->getLanguageService()->sL($GLOBALS['TCA'][$tN]['ctrl']['title'])) . '</option>';
+                $out[] = '<option value="' . htmlspecialchars((string) $tN) . '"' . ($tN === $cur ? ' selected' : '') . '>' . htmlspecialchars($this->getLanguageService()->sL($GLOBALS['TCA'][$tN]['ctrl']['title'])) . '</option>';
             }
         }
         $out[] = '</select>';
@@ -1176,7 +1176,7 @@ class QueryGenerator
         $out[] = '<select class="form-select t3js-submit-change" name="' . $name . '">';
         for ($i = 32 * $compOffSet + $neg; $i < 32 * ($compOffSet + 1); $i += 2) {
             if ($this->lang['comparison'][$i . '_'] ?? false) {
-                $out[] = '<option value="' . $i . '"' . ($i >> 1 === $comparison >> 1 ? ' selected' : '') . '>' . htmlspecialchars($this->lang['comparison'][$i . '_']) . '</option>';
+                $out[] = '<option value="' . $i . '"' . ($i >> 1 === $comparison >> 1 ? ' selected' : '') . '>' . htmlspecialchars((string) $this->lang['comparison'][$i . '_']) . '</option>';
             }
         }
         $out[] = '</select>';
@@ -1280,9 +1280,9 @@ class QueryGenerator
     protected function convertIso8601DatetimeStringToUnixTimestamp(array $conf): array
     {
         if ($this->isDateOfIso8601Format($conf['inputValue'] ?? '')) {
-            $conf['inputValue'] = strtotime($conf['inputValue']);
+            $conf['inputValue'] = strtotime((string) $conf['inputValue']);
             if ($this->isDateOfIso8601Format($conf['inputValue1'] ?? '')) {
-                $conf['inputValue1'] = strtotime($conf['inputValue1']);
+                $conf['inputValue1'] = strtotime((string) $conf['inputValue1']);
             }
         }
 
@@ -1326,7 +1326,7 @@ class QueryGenerator
             }
             $qs .= $operator . ' ';
         }
-        $qsTmp = str_replace('#FIELD#', $prefix . trim(substr($conf['type'], 6)), $this->compSQL[$comparison] ?? '');
+        $qsTmp = str_replace('#FIELD#', $prefix . trim(substr((string) $conf['type'], 6)), $this->compSQL[$comparison] ?? '');
         $inputVal = $this->cleanInputVal($conf);
         if ($comparison === 68 || $comparison === 69) {
             $inputVal = explode(',', (string)$inputVal);
@@ -1346,12 +1346,12 @@ class QueryGenerator
             if (is_array($inputVal)) {
                 $inputVal = $inputVal[0];
             }
-            $qsTmp = str_replace('#VALUE#', trim($queryBuilder->quote((string)$inputVal), '\''), $qsTmp);
+            $qsTmp = str_replace('#VALUE#', trim((string) $queryBuilder->quote((string)$inputVal), '\''), $qsTmp);
         }
         if ($comparison === 37 || $comparison === 36 || $comparison === 66 || $comparison === 67 || $comparison === 100 || $comparison === 101) {
             // between:
             $inputVal = $this->cleanInputVal($conf, '1');
-            $qsTmp = str_replace('#VALUE1#', trim($queryBuilder->quote((string)$inputVal), '\''), $qsTmp);
+            $qsTmp = str_replace('#VALUE1#', trim((string) $queryBuilder->quote((string)$inputVal), '\''), $qsTmp);
         }
         $qs .= trim((string)$qsTmp);
         return $qs;
@@ -1464,7 +1464,7 @@ class QueryGenerator
             // Insert Descending parts
             if ($this->extFieldLists['queryOrder'] ?? false) {
                 $descParts = explode(',', ($modSettings['queryOrderDesc'] ?? '') . ',' . ($modSettings['queryOrder2Desc'] ?? ''));
-                $orderParts = explode(',', $this->extFieldLists['queryOrder']);
+                $orderParts = explode(',', (string) $this->extFieldLists['queryOrder']);
                 $reList = [];
                 foreach ($orderParts as $kk => $vv) {
                     $reList[] = $vv . ($descParts[$kk] ? ' DESC' : '');
@@ -1496,7 +1496,7 @@ class QueryGenerator
                 $out[] = '</div>';
             }
             if (in_array('order', $enableArr) && !($userTsConfig['mod.']['dbint.']['disableOrderBy'] ?? false)) {
-                $orderByArr = explode(',', $this->extFieldLists['queryOrder']);
+                $orderByArr = explode(',', (string) $this->extFieldLists['queryOrder']);
                 $orderBy = [];
                 $orderBy[] = $this->mkTypeSelect('SET[queryOrder]', $orderByArr[0], '');
                 $orderBy[] = '<div class="form-check">';
