@@ -845,7 +845,7 @@ class QueryGenerator
                     $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
                     $statement = $queryBuilder->select($fieldName)
                         ->from($table)
-                        ->execute();
+                        ->executeQuery();
                     while ($row = $statement->fetchAssociative()) {
                         if (str_contains((string) $row[$fieldName], ',')) {
                             $checkContent = explode(',', (string) $row[$fieldName]);
