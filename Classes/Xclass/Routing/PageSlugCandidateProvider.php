@@ -10,11 +10,9 @@ use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Database\QueryGenerator;
 
 class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidateProvider
 {
-
     /**
      * Check for records in the database which matches one of the slug candidates.
      *
@@ -30,9 +28,8 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
     protected function getPagesFromDatabaseForCandidates(array $slugCandidates, int $languageId, array $excludeUids = []): array
     {
         $rootPageUid = $this->site->getRootPageId();
-        $queryGenerator = GeneralUtility::makeInstance(QueryGenerator::class);
-        $pageUidsString = $queryGenerator->getTreeList($rootPageUid, 99999, 0, 'deleted=0');
-        $pageUids = explode(',', (string) $pageUidsString);
+        $pageUidsString = $this->getTreeList($rootPageUid, 99999, 0, 'deleted=0');
+        $pageUids = explode(',', (string)$pageUidsString);
         $workspaceId = (int)$this->context->getPropertyFromAspect('workspace', 'id');
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('pages');
@@ -66,7 +63,7 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
                     'uid',
                     $queryBuilder->createNamedParameter(
                         $pageUids,
-                            Connection::PARAM_INT_ARRAY
+                        Connection::PARAM_INT_ARRAY
                     )
                 )
             )
@@ -89,9 +86,9 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
 //            ->executeQuery();
         ;
 
-//        $query = $queryBuilder->getSQL();
-//        $parameters = $queryBuilder->getParameters();
-        $result = $statement->execute();
+        //        $query = $queryBuilder->getSQL();
+        //        $parameters = $queryBuilder->getParameters();
+        $result = $statement->executeQuery();
 
         $pages = [];
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
@@ -186,5 +183,32 @@ class PageSlugCandidateProvider extends \TYPO3\CMS\Core\Routing\PageSlugCandidat
             }
         }
         return $pages;
+    }
+
+    protected function getTreeList(int $uid, int $depth, int $begin, string $permClause): string
+    {
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable('pages');
+        $queryBuilder = $connection->createQueryBuilder();
+        
+        $result = $queryBuilder
+            ->select('uid')
+            ->from('pages')
+            ->where('pid = :uid')
+            ->andWhere($permClause)
+            ->setParameter('uid', $uid)
+            ->executeQuery();
+            
+        $list = '';
+        if ($depth > 0) {
+            while ($row = $result->fetchAssociative()) {
+                if ($begin <= 0) {
+                    $list .= $row['uid'] . ',';
+                }
+                if ($depth > 1) {
+                    $list .= $this->getTreeList($row['uid'], $depth - 1, $begin - 1, $permClause);
+                }
+            }
+        }
+        return rtrim($list, ',');
     }
 }

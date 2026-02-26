@@ -1,28 +1,29 @@
 {
-  "name": "davitec/dv-swift-pagetree",
-  "type": "typo3-cms-extension",
-  "description": "Faster TYPO3 Pagetree",
-  "authors": [
-    {
-      "name": "Daniel Schöne",
-      "email": "ds@davitec.de"
-    }
-  ],
-  "license": "GPL-2.0+",
-  "require": {
-    "typo3/cms-core": "^11.5.0 || ^12.4.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Davitec\\DvSwiftPagetree\\": "Classes"
-    }
-  },
-  "replace": {
-    "tyop3-ter/dv-swift-pagetree": "self.version"
-  },
-  "extra": {
-    "typo3/cms": {
-      "extension-key": "dv_swift_pagetree"
-    }
-  }
+	"name": "davitec/dv-swift-pagetree",
+	"description": "Faster TYPO3 Pagetree",
+	"license": "GPL-2.0-or-later",
+	"type": "typo3-cms-extension",
+	"version": "13.4.0",
+	"authors": [
+		{
+			"name": "Daniel Schöne",
+			"email": "ds@davitec.de"
+		}
+	],
+	"require": {
+		"typo3/cms-core": "~13.4.0"
+	},
+	"replace": {
+		"tyop3-ter/dv-swift-pagetree": "self.version"
+	},
+	"autoload": {
+		"psr-4": {
+			"Davitec\\DvSwiftPagetree\\": "Classes"
+		}
+	},
+	"extra": {
+		"typo3/cms": {
+			"extension-key": "dv_swift_pagetree"
+		}
+	}
 }
