@@ -21,22 +21,24 @@ class TreeController extends \TYPO3\CMS\Backend\Controller\Page\TreeController
         $this->initializeConfiguration($request);
 
         $items = [];
-        if (!empty($request->getQueryParams()['pid'])) {
+        $parentIdentifier = $request->getQueryParams()['parent'] ?? null;
+        if ($parentIdentifier) {
+            $parentDepth = (int)($request->getQueryParams()['depth'] ?? 0);
             // Fetching a part of a page tree
-            $entryPoints = $this->getAllEntryPointPageTrees((int)$request->getQueryParams()['pid']);
+            $entryPoints = $this->getAllEntryPointPageTrees((int)$parentIdentifier);
             $mountPid = (int)($request->getQueryParams()['mount'] ?? 0);
-            $parentDepth = (int)($request->getQueryParams()['pidDepth'] ?? 0);
             $this->levelsToFetch = $parentDepth + $this->levelsToFetch;
             foreach ($entryPoints as $page) {
-                $items = array_merge($items, $this->pagesToFlatArray($page, $mountPid, $parentDepth));
+                $items[] = $this->pagesToFlatArray($page, $mountPid, $parentDepth);
             }
         } else {
             $entryPoints = $this->getAllEntryPointPageTrees();
             foreach ($entryPoints as $page) {
-                $items = array_merge($items, $this->pagesToFlatArray($page, (int)$page['uid'], 1));
+                $items[] = $this->pagesToFlatArray($page, (int)$page['uid']);
             }
         }
+        $items = array_merge(...$items);
 
-        return new JsonResponse($items);
+        return new JsonResponse($this->getPostProcessedPageItems($request, $items));
     }
 }
