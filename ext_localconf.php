@@ -1,10 +1,11 @@
 <?php
-if (!defined('TYPO3_MODE')) {
-  die('Access denied.');
+
+if (!defined('TYPO3')) {
+    // die('Access denied.');
 }
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Controller\Page\TreeController::class] = [
-  'className' => \Davitec\DvSwiftPagetree\Xclass\Backend\Controller\Page\TreeController::class,
+    'className' => \Davitec\DvSwiftPagetree\Xclass\Backend\Controller\Page\TreeController::class,
 ];
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\ContextMenu\ItemProviders\PageProvider::class] = [
@@ -14,4 +15,3 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\ContextMenu\Ite
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Core\Routing\PageSlugCandidateProvider::class] = [
     'className' => \Davitec\DvSwiftPagetree\Xclass\Routing\PageSlugCandidateProvider::class,
 ];
-
