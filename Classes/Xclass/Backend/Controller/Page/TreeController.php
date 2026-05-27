@@ -33,6 +33,7 @@ class TreeController extends \TYPO3\CMS\Backend\Controller\Page\TreeController
             }
         } else {
             $entryPoints = $this->getAllEntryPointPageTrees();
+            $this->levelsToFetch = 1;
             foreach ($entryPoints as $page) {
                 $items[] = $this->pagesToFlatArray($page, (int)$page['uid']);
             }
